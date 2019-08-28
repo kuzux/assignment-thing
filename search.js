@@ -1,11 +1,28 @@
 const search = (model, data, cb) => {
-    // checking for illegal conditions
+    // checking for invalid conditions
+    if(!data.minCount || !data.maxCount || !data.startDate || !data.endDate) {
+        cb("missing argument");
+        return;
+    }
+    
     if(data.minCount > data.maxCount) {
         cb("minCount can't be greater than max count");
         return;
     }
+    if(typeof(data.minCount) !== "number" || Number.isNaN(data.minCount)
+        || typeof(data.maxCount) !== "number" || Number.isNaN(data.maxCount)) {
+        cb("invalid count");
+        return;
+    }
+    // the counts array can be negative, so our limits can also be negative
+
     const startDate = new Date(`${data.startDate}T00:00:00.000Z`);
     const endDate =  new Date(`${data.endDate}T23:59:59.999Z`);
+    // kind of sad that i have to do this to detect invalid dates
+    if(startDate.getTime() !== startDate.getTime() || startDate.getTime() !== startDate.getTime()) {
+        cb("invalid start or end date");
+        return;
+    }
     if(startDate > endDate) {
         cb("start date can't be greater than end date");
         return;

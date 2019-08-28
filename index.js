@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const search = require("./search");
+const schema = require("./schema");
 
 const port = 3000;
 const app = express();
@@ -16,12 +17,6 @@ const db = mongoose.connection;
 db.on('error', (err) => { console.log(`connection error: ${err}`); });
 db.once('open', () => { console.log("connected to db"); });
 
-const schema = new mongoose.Schema({
-    createdAt: Date,
-    counts: [Number]
-}, {
-    collection: 'records'
-});
 const Record = mongoose.model('Record', schema);
 
 app.post('/filter', (req, res) => {
