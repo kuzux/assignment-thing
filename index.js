@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const search = require("./search");
 const schema = require("./schema");
 
-const port = 3000;
+const port = process.env.PORT;
 const app = express();
 app.use(bodyParser.json());
 
