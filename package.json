@@ -4,7 +4,8 @@
   "description": "Case study for a job application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "server": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,11 @@
   },
   "homepage": "https://github.com/kuzux/case-study#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "mongodb": "^3.3.1"
+    "mongoose": "^5.6.11"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0"
   }
 }
