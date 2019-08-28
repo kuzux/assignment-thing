@@ -1,3 +1,21 @@
+/**
+ * Callback for when there is (or is not) data
+ * 
+ * @callback dataCb
+ * @param err not null if there is an error, null in case of error\]
+ * @param data returned data if there is no error
+ */
+
+/**
+ * Connect to the server, execute the query and fetch the results.
+ * @param {mongoose.Model} model 
+ * @param {Object} data query options 
+ * @param {Number} data.minCount minimum total count to filter
+ * @param {Number} data.maxCount maximum total count to filter
+ * @param {String} data.startDate minimum date to filter. in YYYY-MM-DD format
+ * @param {String} data.startDate minimum date to filter. in YYYY-MM-DD format
+ * @param {dataCb} cb when the data (or an error) is retrieved
+ */
 const search = (model, data, cb) => {
     // checking for invalid conditions
     if(!data.minCount || !data.maxCount || !data.startDate || !data.endDate) {
@@ -27,6 +45,9 @@ const search = (model, data, cb) => {
         cb("start date can't be greater than end date");
         return;
     }
+
+    // not sure what I should do if the model is invalid for some reason
+
     // this query is unnecessarily complicated, IMO. Looks just like a broken way to write some sql
     // the query included for comparison.
     // select id, createdAt, sum(counts) as totalCounts from records 

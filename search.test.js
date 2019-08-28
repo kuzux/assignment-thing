@@ -52,6 +52,7 @@ test("count is nan", () => {
 });
 
 describe("happy path", () => {
+    // whatever, doesn't have to mach the original definition. Didn't even need to have a schema
     const model = mongoose.model("Model", schema);
     
     beforeEach(() => {
