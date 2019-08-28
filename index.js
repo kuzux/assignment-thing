@@ -3,6 +3,7 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
+const search = require("./search");
 
 const port = 3000;
 const app = express();
@@ -11,6 +12,7 @@ app.use(bodyParser.json());
 // not sure how to stub this out for testing, but there should be a way.
 mongoose.connect(process.env.DB_URL, {useNewUrlParser: true});
 const db = mongoose.connection;
+// handling db connection errors
 db.on('error', (err) => { console.log(`connection error: ${err}`); });
 db.once('open', () => { console.log("connected to db"); });
 
@@ -23,42 +25,13 @@ const schema = new mongoose.Schema({
 const Record = mongoose.model('Record', schema);
 
 app.post('/filter', (req, res) => {
-    // this query is unnecessarily complicated, IMO. Looks just like a broken way to write some sql
-    // the query included for comparison.
-    // select id, createdAt, sum(counts) as totalCounts from records 
-    //        group by _id 
-    //        having sum(counts) between minValue and maxValue
-    //        where createdAt between startDate and endDate;
-    const recs = Record.aggregate([
-        { $match: {
-            // this was probably my biggest hurdle in all of this, the aggregate query was easy,
-            // this one just didn't seem to work at all no matter what I try
-            createdAt: {
-                $gt: new Date(`${req.body.startDate}T00:00:00.000Z`),
-                $lt: new Date(`${req.body.endDate}T23:59:59.999Z`)
-            }
-        }},
-        { $addFields: {
-            totalCount: {$sum: "$counts"}
-        }},
-        { $project: {
-            _id: 1,
-            createdAt: 1,
-            totalCount: 1
-        }},
-        { $match: {
-            totalCount: {
-                $lt: req.body.maxCount,
-                $gt: req.body.minCount
-            }
-        }}
-    ]);
-    recs.exec((err, docs) => {
+    search(Record, req.body, (err, docs) => {
         if(err) {
+            // maybe do better logging later on?
             console.log(`query error: ${err}`);
             res.send({
                 code: 1,
-                msg: `query error: ${err}`
+                msg: `error: ${err}`
             });
         } else {
             res.send({
